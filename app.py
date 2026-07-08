@@ -114,3 +114,5 @@ if user_input:
         st.session_state["messages"].append(
             {"role": "assistant", "content": display_text, "sources": citation_filter.keys}
         )
+        if is_empty:
+            st.rerun()
