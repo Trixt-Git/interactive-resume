@@ -17,6 +17,8 @@ if "system_prompt" not in st.session_state:
     st.session_state["system_prompt"] = build_system_prompt(load_facts())
 if "messages" not in st.session_state:
     st.session_state["messages"] = []
+if "pending_user_input" not in st.session_state:
+    st.session_state["pending_user_input"] = None
 
 is_empty = not st.session_state["messages"]
 
@@ -94,51 +96,51 @@ def render_bottom_bar(key_prefix):
             return clicked or value
 
 
-hero_placeholder = st.empty()
-
-if is_empty:
-    with hero_placeholder.container():
-        with st.container(key="wilos_hero"):
-            st.markdown('<div class="wilos-title">WilOS</div>', unsafe_allow_html=True)
-            st.markdown('<div class="wilos-subtitle">Ready when you are.</div>', unsafe_allow_html=True)
-            user_input = st.chat_input("Ask about Wil's background, skills, or projects", key="hero_chat_input")
-            clicked = render_quick_actions(st, "hero")
-            if clicked:
-                user_input = clicked
-else:
-    user_input = render_bottom_bar("main")
-
-if user_input:
+def submit_input(text):
     if len(st.session_state["messages"]) >= 60:
         st.warning(
             "This session has hit its message limit — feel free to refresh "
             "to start a new one, or reach Wil directly via the links in his "
             "resume."
         )
-    elif len(user_input) > 1000:
+    elif len(text) > 1000:
         st.warning("That message is too long for this bot — could you shorten it?")
     else:
-        st.session_state["messages"].append({"role": "user", "content": user_input})
-        with st.chat_message("user"):
-            st.write(user_input)
+        st.session_state["messages"].append({"role": "user", "content": text})
+        st.session_state["pending_user_input"] = text
+        st.rerun()
 
-        last_12_messages = [
-            {"role": m["role"], "content": m["content"]}
-            for m in st.session_state["messages"][-12:]
-        ]
-        if last_12_messages and last_12_messages[0]["role"] != "user":
-            last_12_messages = last_12_messages[1:]
 
-        with st.chat_message("assistant", avatar="💬"):
-            st.markdown('<div class="askwil-label">Wil</div>', unsafe_allow_html=True)
-            citation_filter = CitationStreamFilter(
-                get_reply_stream(api_key, st.session_state["system_prompt"], last_12_messages)
-            )
-            display_text = st.write_stream(citation_filter)
-            render_marker(display_text, citation_filter.keys)
-        st.session_state["messages"].append(
-            {"role": "assistant", "content": display_text, "sources": citation_filter.keys}
+if is_empty:
+    with st.container(key="wilos_hero"):
+        st.markdown('<div class="wilos-title">WilOS</div>', unsafe_allow_html=True)
+        st.markdown('<div class="wilos-subtitle">Ready when you are.</div>', unsafe_allow_html=True)
+        user_input = st.chat_input("Ask about Wil's background, skills, or projects", key="hero_chat_input")
+        clicked = render_quick_actions(st, "hero")
+        if clicked:
+            user_input = clicked
+else:
+    user_input = render_bottom_bar("main")
+
+if user_input:
+    submit_input(user_input)
+
+if st.session_state["pending_user_input"]:
+    last_12_messages = [
+        {"role": m["role"], "content": m["content"]}
+        for m in st.session_state["messages"][-12:]
+    ]
+    if last_12_messages and last_12_messages[0]["role"] != "user":
+        last_12_messages = last_12_messages[1:]
+
+    with st.chat_message("assistant", avatar="💬"):
+        st.markdown('<div class="askwil-label">Wil</div>', unsafe_allow_html=True)
+        citation_filter = CitationStreamFilter(
+            get_reply_stream(api_key, st.session_state["system_prompt"], last_12_messages)
         )
-        if is_empty:
-            hero_placeholder.empty()
-            render_bottom_bar("main")
+        display_text = st.write_stream(citation_filter)
+        render_marker(display_text, citation_filter.keys)
+    st.session_state["messages"].append(
+        {"role": "assistant", "content": display_text, "sources": citation_filter.keys}
+    )
+    st.session_state["pending_user_input"] = None
