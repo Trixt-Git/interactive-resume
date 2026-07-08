@@ -78,9 +78,8 @@ if not st.session_state["messages"]:
         user_input = "What are your technical skills?"
     if c3.button("Why the pivot from hospitality into tech?"):
         user_input = "Why the pivot from hospitality into tech?"
-    if c4.button("Why would Wil be a strong fit for Fidelity’s LEAP Systems Analyst role?"):
-        user_input = "Why would Wil be a strong fit for Fidelity’s LEAP Systems Analyst role?"
-        
+    if c4.button("Why Fidelity?"):
+        user_input = "Why would Wil be a strong fit for Fidelity's LEAP Systems Analyst role?"
 if user_input:
     if len(st.session_state["messages"]) >= 60:
         st.warning(
