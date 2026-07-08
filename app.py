@@ -91,12 +91,6 @@ def render_pending_reply() -> None:
     st.session_state["pending_user_input"] = None
 
 
-if not is_empty:
-    with st.container(key="wilos_chat_panel"):
-        render_history()
-        if st.session_state["pending_user_input"]:
-            render_pending_reply()
-
 QUICK_ACTIONS = [
     ("Experience", "Walk me through your work experience."),
     ("Projects", "Tell me about your projects."),
@@ -153,3 +147,9 @@ else:
 
 if user_input:
     submit_input(user_input)
+
+if not is_empty:
+    with st.container(key="wilos_chat_panel"):
+        render_history()
+        if st.session_state["pending_user_input"]:
+            render_pending_reply()
