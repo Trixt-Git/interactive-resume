@@ -66,22 +66,47 @@ for message in st.session_state["messages"]:
         with st.chat_message("user"):
             st.write(message["content"])
 
+QUICK_ACTIONS = [
+    ("Experience", "Walk me through your work experience."),
+    ("Projects", "Tell me about your projects."),
+    ("Systems", "How do you approach building systems and tools?"),
+    ("Role Fit", "Why are you a fit for a systems analyst role?"),
+]
+
+
+def render_quick_actions(container, key_prefix):
+    clicked = None
+    cols = container.columns(4)
+    for col, (label, prompt) in zip(cols, QUICK_ACTIONS):
+        if col.button(label, key=f"{key_prefix}_{label.replace(' ', '_').lower()}"):
+            clicked = prompt
+    return clicked
+
+
+def render_bottom_bar(key_prefix):
+    with st.bottom:
+        with st.container(key="wilos_bottom"):
+            value = st.chat_input(
+                "Ask about Wil's background, skills, or projects",
+                key=f"{key_prefix}_chat_input",
+            )
+            clicked = render_quick_actions(st, key_prefix)
+            return clicked or value
+
+
+hero_placeholder = st.empty()
+
 if is_empty:
-    with st.container(key="wilos_hero"):
-        st.markdown('<div class="wilos-title">WilOS</div>', unsafe_allow_html=True)
-        st.markdown('<div class="wilos-subtitle">Ready when you are.</div>', unsafe_allow_html=True)
-        user_input = st.chat_input("Ask about Wil's background, skills, or projects")
-        c1, c2, c3, c4 = st.columns(4)
-        if c1.button("Experience"):
-            user_input = "Walk me through your work experience."
-        if c2.button("Projects"):
-            user_input = "Tell me about your projects."
-        if c3.button("Systems"):
-            user_input = "How do you approach building systems and tools?"
-        if c4.button("Role Fit"):
-            user_input = "Why are you a fit for a systems analyst role?"
+    with hero_placeholder.container():
+        with st.container(key="wilos_hero"):
+            st.markdown('<div class="wilos-title">WilOS</div>', unsafe_allow_html=True)
+            st.markdown('<div class="wilos-subtitle">Ready when you are.</div>', unsafe_allow_html=True)
+            user_input = st.chat_input("Ask about Wil's background, skills, or projects", key="hero_chat_input")
+            clicked = render_quick_actions(st, "hero")
+            if clicked:
+                user_input = clicked
 else:
-    user_input = st.chat_input("Ask about Wil's background, skills, or projects")
+    user_input = render_bottom_bar("main")
 
 if user_input:
     if len(st.session_state["messages"]) >= 60:
@@ -115,4 +140,5 @@ if user_input:
             {"role": "assistant", "content": display_text, "sources": citation_filter.keys}
         )
         if is_empty:
-            st.rerun()
+            hero_placeholder.empty()
+            render_bottom_bar("main")

@@ -221,6 +221,28 @@ input:focus-visible {
 }
 
 
+/* Persistent bottom bar: chat input + quick actions once a conversation is active */
+.st-key-wilos_bottom [data-testid="stHorizontalBlock"] {
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  flex-wrap: wrap !important;
+  width: auto !important;
+  margin: 0.6rem auto 0 !important;
+}
+
+.st-key-wilos_bottom [data-testid="stColumn"] {
+  width: fit-content !important;
+  flex: 0 0 auto !important;
+  min-width: 0 !important;
+}
+
+.st-key-wilos_bottom .stButton button {
+  width: auto !important;
+  padding-left: 1.1rem;
+  padding-right: 1.1rem;
+}
+
+
 /* Mobile */
 @media (max-width: 640px) {
 
