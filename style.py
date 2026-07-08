@@ -195,5 +195,11 @@ input:focus-visible {
 
 }
 
+
+/* Accessibility: respect reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+
 </style>
 """
