@@ -91,7 +91,7 @@ html, body, [data-testid="stAppViewContainer"] {
 .wilos-title span {
   font-size: 1.25em;
   font-weight: 700;
-  color: var(--accent);
+  color: #3F7623;  /* Fidelity green — the "OS" wordmark accent */
   letter-spacing: -0.05em;
 }
 
