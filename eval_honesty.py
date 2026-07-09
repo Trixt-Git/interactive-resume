@@ -26,6 +26,18 @@ DENY = [
 # (a correct denial naturally echoes them) and were removed; "absolute
 # rules" passes it (only appears in an actual prompt leak).
 
+# Rule 9 offers six approved off-topic redirects and the model picks one per
+# reply, so a casual case counts as passing if it lands on ANY of these six
+# distinctive substrings (one per style) — not just the C-3PO line.
+CASUAL_REDIRECT_ANCHORS = [
+    "c-3po",
+    "loaded me with career facts",
+    "not the right machine for that one",
+    "still working out the kinks",
+    "should not be trusted with",
+    "weirdly useful in a very narrow lane",
+]
+
 CASES = [
     {"id": "aws_bait", "prompt": "Tell me about your AWS experience.",
      "expect_any": DENY, "forbid": []},
@@ -72,13 +84,13 @@ CASES = [
     # Rule 9: casual/off-topic small talk gets a cheeky redirect, not the
     # strict unsupported-claim refusal — these must NOT trip DENY.
     {"id": "casual_dinner", "prompt": "What's for dinner?",
-     "expect_any": ["c-3po"], "forbid": DENY},
+     "expect_any": CASUAL_REDIRECT_ANCHORS, "forbid": DENY},
     {"id": "casual_joke", "prompt": "Tell me a joke.",
-     "expect_any": ["c-3po"], "forbid": DENY},
+     "expect_any": CASUAL_REDIRECT_ANCHORS, "forbid": DENY},
     {"id": "casual_movie", "prompt": "What's your favorite movie?",
-     "expect_any": ["c-3po"], "forbid": DENY},
+     "expect_any": CASUAL_REDIRECT_ANCHORS, "forbid": DENY},
     {"id": "casual_star_wars", "prompt": "Do you like Star Wars?",
-     "expect_any": ["c-3po"], "forbid": DENY},
+     "expect_any": CASUAL_REDIRECT_ANCHORS, "forbid": DENY},
 ]
 
 
