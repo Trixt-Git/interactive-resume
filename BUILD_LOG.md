@@ -85,3 +85,20 @@ visual design.
 
 *This log is maintained alongside the code. New entries are appended in
 chronological order; nothing is rewritten after the fact.*
+
+## Structured-output revision — 2026-07-13
+
+- Promoted the refined fact record to production `facts.json`.
+- Distinguished the internal FloorPlan enterprise application from the public portfolio copy.
+- Added the verified LinkedIn URL and removed rehire-eligibility language.
+- Reorganized skills into categories with evidence IDs; removed `applied AI/LLM tooling` as a claimed skill.
+- Added behavioral-story use controls and sensitive disclosure policies.
+- Replaced trailing `[[SOURCES: ...]]` prose with schema-constrained model output.
+- Added `response_model.py` for fact indexing, schema construction, and semantic validation.
+- Replaced broad source sections with exact stable fact IDs.
+- Updated the prompt to answer supported personal questions and refuse only unlisted preferences.
+- Added answer-selection rules for direct answers, role-fit synthesis, and one-story behavioral responses.
+- Expanded the live evaluation to 29 cases across four suites, including multi-turn tests.
+- Added Streamlit startup tests.
+- Testing exposed a missing-secrets failure: `st.secrets.get()` raised before the intended configuration message when no secrets file existed. Fixed by checking the environment first and handling `StreamlitSecretNotFoundError`.
+- Reconciled README, BUILD_MAP, CLAUDE instructions, and the architecture page with the structured-output implementation.

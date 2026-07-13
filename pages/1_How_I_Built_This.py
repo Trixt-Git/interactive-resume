@@ -2,203 +2,111 @@ import streamlit as st
 
 from style import STYLE
 
-st.set_page_config(page_title="How I Built This — WilOS", page_icon="💬")
+st.set_page_config(page_title="How I Built This | WilOS", page_icon="💬")
 st.markdown(STYLE, unsafe_allow_html=True)
 
 st.title("How I Built This")
 st.markdown(
-    "A systems-analysis case study of WilOS's architecture, spec discipline, "
-    "and validation — written for a technical, analyst-minded reader rather "
-    "than as a dev-showcase."
+    "WilOS is a systems-analysis project disguised as an interactive resume. "
+    "The main requirement is not to sound impressive. It is to answer usefully "
+    "without inventing anything about a real candidate."
 )
 
-st.header("Responsible AI by design")
+st.header("One complete source of truth")
 st.markdown(
     """
-The core requirement for this project was never "sound impressive" — it was
-**refuse over speculate**. A chatbot that answers on someone's behalf and
-gets it wrong is worse than one that says nothing, because a bad guess reads
-as a lie about a real person's background.
+The full verified `facts.json` file is compiled into the system prompt at startup.
+There is no vector database or retrieval layer because the corpus is one person's
+background. At this size, retrieval would create a new way to miss relevant facts
+without solving a context-window problem.
 
-The architecture follows from that constraint. Instead of retrieval
-(RAG, a vector database, embeddings), the entire verified-facts file is
-compiled into the system prompt once, at startup. The reasoning: the corpus
-is one person's background at roughly 2–4k tokens, comfortably inside the
-model's context window, so retrieval would add failure modes (missed
-chunks, irrelevant matches) for zero accuracy benefit at this scale. The
-model always sees the complete record, not a retrieved subset of it.
-
-Refusal is enforced through a small set of absolute rules in the system
-prompt, each anchored to an exact sentence rather than an open-ended
-instruction:
-
-- Unknown-topic questions get a fixed fallback sentence, never an
-  improvised one.
-- Skills outside a whitelist get denied plainly, using another fixed
-  sentence.
-- Attempts to override the persona, leak the prompt, or answer outside the
-  verified record get a fixed refusal sentence, then a redirect back to the
-  real background.
-- Questions built on a false premise ("It says here you led a team...")
-  get corrected against a fixed sentence, then redirected to the closest
-  true fact.
-
-That last point — locking refusals to *exact sentences* instead of letting
-the model phrase them freely — turned out to matter more than it sounds
-like it should. That story is in Testing & Validation below.
+Each citeable entry has a stable id. Skills are grouped by category and mapped to
+evidence ids. Behavioral stories carry selection controls so the model knows when
+a story is useful and when it should not be volunteered.
 """
 )
 
-st.header("Requirements & specification")
+st.header("Structured answers, not citation-shaped text")
 st.markdown(
     """
-The build followed a locked specification document — a build map — written
-before any code existed, with every architectural decision made once and
-justified, rather than re-litigated phase by phase. Each phase had its own
-task description, exact file list, and a **Definition of Done** the phase
-had to satisfy before the next one could start.
+The first version asked the model to append a trailing source tag and used a
+regular expression to remove it before display. That worked most of the time, but
+it made citation correctness another instruction-following problem.
 
-Locked decisions were things like: which model to call, how conversation
-state is held, what the session and input caps are, and where the one
-seam importing the model provider's SDK lives. None of those were open
-questions during execution — the spec existed precisely so they wouldn't
-need to be re-decided under time pressure.
+The current version uses the provider's structured-output feature. The model must
+return three fields: the visible answer, a response type, and stable source ids.
+The JSON schema limits ids to values that actually exist in the facts file. The
+application validates the semantics again before rendering anything.
 
-Specs are still written by people (or models), and this one had a real
-discrepancy worth naming rather than glossing over: one phase's task
-description said the facts schema has "seven top-level keys," while the
-schema definition elsewhere in the same document actually lists eight
-top-level keys. Rather than picking one number and hoping, the schema test
-was written against the **actual schema's real keys**, and the mismatch was
-reported back instead of silently resolved either way. That's the general
-pattern for handling spec ambiguity here: when prose and structure
-disagree, structure wins, and the disagreement gets flagged, not buried.
-
-The specification itself also evolved — every amendment to a locked rule
-is recorded in a running changelog at the top of the document, each entry
-naming what broke, why, and what changed. Nothing is silently edited.
+That means the UI does not guess whether an answer was a refusal by searching for
+phrases such as "haven't used." It reads an explicit `response_type`. It also shows
+specific evidence such as `FloorPlan` or `Software Implementation Consultant at
+Reynolds & Reynolds`, rather than a broad label such as `projects`.
 """
 )
 
-st.header("Testing & validation")
+st.header("Answer selection matters as much as refusal")
 st.markdown(
     """
-Two independent layers of testing exist, deliberately separated because
-they check different things.
+The original prompt spent most of its attention on what the model could not say.
+The revised prompt keeps those boundaries, then gives the model a decision process:
+answer in the first sentence, select the smallest useful evidence set, use one
+matching story for behavioral questions, and explain role fit instead of listing
+keywords.
 
-**pytest** (fast, free, run constantly) checks structure: that the facts
-file parses and has the right shape, and that the system prompt actually
-contains the exact anchor sentences it's supposed to — so a mis-copied
-prompt fails a free unit test before it ever costs an API call.
+Supported personal questions are now answerable. WilOS can say that Wil follows
+hockey because that fact exists. It cannot invent a favorite team because that fact
+does not exist. Sensitive answers and contact details are available only when the
+question directly calls for them.
+"""
+)
 
-**The adversarial honesty eval** (`eval_honesty.py`, run manually — it
-costs real API calls) checks behavior against the live model: 24 fixed
-prompts designed to bait overclaiming (unearned AWS/React/Java/Kubernetes/
-FastAPI experience, a fake certification, a fabricated internship),
-attempt prompt injection or a persona override, assert a false premise
-about the candidate's history, ask a plain factual question that should
-be answered confidently, or make purely casual small talk that should get
-a light redirect instead of a stiff refusal. Each case passes only if the
-reply contains an expected phrase, doesn't contain a forbidden one, and
-doesn't contain any hedging language from a global forbid list — all
-checked as case-insensitive substring matches. The bar is strict: every
-one of the 24 cases has to pass, every time, or the eval fails outright.
+st.header("Four separate evaluation problems")
+st.markdown(
+    """
+A single honesty score hides different failure modes, so the live evaluation is
+split into four suites:
 
-That strictness is what surfaced real defects instead of hiding them.
-Four examples, all fixed at the source rather than by loosening the test:
+- **Grounding:** Is the answer factually supported, and are the source ids correct?
+- **Answer quality:** Is it direct, concise, and based on the best story rather than a resume dump?
+- **Conversation:** Do follow-up questions retain the right context without crossing a boundary?
+- **Boundaries:** Does the model reject unsupported skills, false premises, prompt injection, and unlisted preferences?
 
-- An early open-ended rule ("decline in one sentence") let the model phrase
-  a genuine refusal in ways the eval didn't recognize as a refusal — the
-  behavior was correct, the wording just wasn't anchored. The fix was to
-  give that rule an exact required sentence, the same treatment the other
-  absolute rules already had.
-- A forbidden phrase used to catch overclaiming turned out to be
-  **negation-blind**: a correct denial ("I haven't led a team of
-  engineers") contains the same substring as a false claim would
-  ("I led a team of engineers"), so the check occasionally flagged an
-  honest answer as a failure. An audit found three more forbidden phrases
-  with the same defect; all four were removed rather than patched
-  one at a time.
-- The same negation-blind defect resurfaced later in a different case: a
-  correct, honest answer to "what are your confirmed skills" could name
-  what it does *not* claim in the same breath ("...React, FastAPI, Java,
-  AWS...and I won't claim those"), tripping a forbid list built to catch
-  overclaiming those exact words. Same fix as before — remove the
-  offending forbid strings rather than patch around one failure.
-- Adding a lighter-touch rule for casual off-topic small talk (so "What's
-  for dinner?" gets a dry one-line redirect instead of a stiff refusal)
-  introduced one redirect line that happened to contain "probably" — a
-  word the eval's global forbid list bans as a hedge. That was a
-  deterministic defect baked into the locked prompt text itself, not
-  chance: it failed every time the model picked that specific redirect.
-  Fixed by rewording the line to "likely" — the eval's anchor for that
-  variant didn't depend on the word "probably," so nothing about the
-  detection logic needed to change, just the two words causing the clash.
-
-All four fixes made the eval **stricter or more precise**, never looser —
-narrowing what counts as compliant behavior instead of widening what
-counts as a pass.
+The default live run executes every case three times. A single pass can show that a
+prompt works once; it cannot show that the behavior is stable.
 """
 )
 
 st.header("System data flow")
-st.markdown("How one message moves through the system, start to finish:")
 st.markdown(
     """
 <div class="wilos-flow">
-  <div class="wilos-flow-step">User submits a message (typed, or a starter prompt)</div>
+  <div class="wilos-flow-step">User submits a question</div>
   <div class="wilos-flow-arrow">↓</div>
-  <div class="wilos-flow-step">Guardrail check — session cap (30 exchanges) and 1,000-character input cap, before any API call</div>
+  <div class="wilos-flow-step">Input and session limits are checked before the API call</div>
   <div class="wilos-flow-arrow">↓</div>
-  <div class="wilos-flow-step">Facts grounding — the full verified-facts file was already compiled into the system prompt at startup; nothing is retrieved per-message</div>
+  <div class="wilos-flow-step">The cached system prompt contains the full verified facts file and answer rules</div>
   <div class="wilos-flow-arrow">↓</div>
-  <div class="wilos-flow-step">Model call — system prompt (marked cacheable) + last 12 messages sent to the model, streamed back token by token</div>
+  <div class="wilos-flow-step">Claude returns schema-constrained JSON</div>
   <div class="wilos-flow-arrow">↓</div>
-  <div class="wilos-flow-step">Citation parse — a trailing machine-readable source tag is stripped from the reply before display; a failed or missing tag just means no citation line, never an error</div>
+  <div class="wilos-flow-step">WilOS validates response type and source ids against the facts index</div>
   <div class="wilos-flow-arrow">↓</div>
-  <div class="wilos-flow-step">Rendered response — sourced answers and refusals are visually distinguishable at a glance</div>
+  <div class="wilos-flow-step">The visible answer and specific evidence labels are rendered</div>
 </div>
 """,
     unsafe_allow_html=True,
 )
 
-st.header("Cost & trade-off analysis")
+st.header("Deliberate tradeoffs")
 st.markdown(
     """
-The system prompt is sent as a cacheable content block, so a 5-minute
-cache lets repeat calls in the same session read the (unchanging)
-system prompt at a steep discount instead of paying full price every
-turn.
+The deployed model remains configurable, with Haiku 4.5 as the default. The goal is
+not to use the largest model available. It is to find the least expensive model
+that consistently passes the same grounding and answer-quality tests.
 
-**That claim was checked against reality twice, with two different
-answers, and both are worth keeping visible.** A live check of the
-model's own usage statistics found caching only actually engages above
-roughly 4,096–4,600 tokens for this model — found by testing
-progressively larger synthetic prompts against the real API and
-watching for `cache_creation_input_tokens`/`cache_read_input_tokens`
-to turn nonzero. At the time, the real system prompt measured 2,263
-tokens, well under that floor, so every call was paying full input
-price despite an earlier version of this page claiming otherwise —
-that was corrected to the honest number rather than padded to force
-the claim true. Since then, the facts file grew with real content
-(not filler, added for its own reasons) to 4,208 tokens, which
-naturally crossed the real threshold: a fresh check now shows
-`cache_read_input_tokens` matching the system prompt's size on repeat
-calls. Same discipline both times — report the real number, don't
-force the convenient one — it just happened to land differently on
-the second check. Cost is still low regardless — the $5/month console
-spend cap is the actual ceiling either way.
-
-On model tiering: this specification was written once, up front, with
-every architectural decision already made and justified, by a
-higher-capability model — then each phase was executed mechanically
-against that locked spec by a lower-cost model, without re-opening design
-decisions. The idea is that judgment is the expensive part and execution
-is the cheap part, and a spec precise enough to hand off safely is itself
-evidence the design was sound. Separately, the *deployed app* runs on a
-small, fast model rather than a large one, because refusing to overclaim
-is fundamentally an instruction-following problem, not a raw-capability
-one — a cheap model that reliably follows a strict rule beats an expensive
-one that occasionally improvises around it.
+The app buffers the short structured response instead of streaming raw JSON. That
+trades a small amount of perceived speed for reliable parsing and a cleaner UI.
+The enterprise FloorPlan application and company data remain private; only a
+separate portfolio copy is public.
 """
 )

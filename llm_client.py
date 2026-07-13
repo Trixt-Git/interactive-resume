@@ -1,40 +1,46 @@
+"""The single Claude API seam for WilOS."""
+
+from __future__ import annotations
+
+import os
+
 import anthropic
 
-MODEL = "claude-haiku-4-5-20251001"
+from response_model import LLMReply, build_response_schema, error_reply, parse_structured_reply
+
+DEFAULT_MODEL = "claude-haiku-4-5-20251001"
+MODEL = os.getenv("ANTHROPIC_MODEL", DEFAULT_MODEL)
 
 
-def get_reply(api_key: str, system_prompt: str, messages: list[dict]) -> str:
-    """messages: [{"role": "user"|"assistant", "content": str}, ...]
-    Returns assistant text, or the LOCKED error string on any exception."""
+def get_reply(
+    api_key: str,
+    system_prompt: str,
+    messages: list[dict],
+    valid_source_ids: set[str] | list[str] | tuple[str, ...],
+) -> LLMReply:
+    """Return a validated, structured reply or a safe application error."""
     try:
         client = anthropic.Anthropic(api_key=api_key)
         response = client.messages.create(
             model=MODEL,
-            max_tokens=400,
+            max_tokens=600,
             temperature=0.2,
-            system=[{"type": "text", "text": system_prompt, "cache_control": {"type": "ephemeral"}}],
+            system=[
+                {
+                    "type": "text",
+                    "text": system_prompt,
+                    "cache_control": {"type": "ephemeral"},
+                }
+            ],
             messages=messages,
+            output_config={
+                "format": {
+                    "type": "json_schema",
+                    "schema": build_response_schema(valid_source_ids),
+                }
+            },
         )
-        return response.content[0].text
-    except Exception as e:
-        print(f"[llm_client] {type(e).__name__}: {e}")
-        return "Something went wrong on my end — please try that question again in a moment."
-
-
-def get_reply_stream(api_key: str, system_prompt: str, messages: list[dict]):
-    """Same contract as get_reply, but yields text chunks for st.write_stream.
-    On any exception, yields the LOCKED error string once and stops."""
-    try:
-        client = anthropic.Anthropic(api_key=api_key)
-        with client.messages.stream(
-            model=MODEL,
-            max_tokens=400,
-            temperature=0.2,
-            system=[{"type": "text", "text": system_prompt, "cache_control": {"type": "ephemeral"}}],
-            messages=messages,
-        ) as stream:
-            for text in stream.text_stream:
-                yield text
-    except Exception as e:
-        print(f"[llm_client] {type(e).__name__}: {e}")
-        yield "Something went wrong on my end — please try that question again in a moment."
+        return parse_structured_reply(response.content[0].text, valid_source_ids)
+    except Exception as exc:  # The UI must not leak provider or validation details.
+        print(f"[llm_client] {type(exc).__name__}: {exc}")
+        return error_reply()

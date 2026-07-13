@@ -1,59 +1,49 @@
 import json
+from pathlib import Path
+
+from response_model import build_fact_index
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
-def load_facts():
-    with open("facts.json") as f:
-        return json.load(f)
+def load():
+    return json.loads((ROOT / "facts.json").read_text(encoding="utf-8"))
 
 
-def test_facts_json_parses():
-    facts = load_facts()
-    assert isinstance(facts, dict)
+def test_fact_ids_are_unique_and_expected_core_ids_exist():
+    facts = load()
+    index = build_fact_index(facts)
+    assert len(index) == len(set(index))
+    assert {"ID-01", "NAR-01", "ROLE-01", "SKL-01", "PROJ-FP", "PROJ-WOS", "PERS-01"} <= set(index)
 
 
-def test_top_level_keys_present():
-    facts = load_facts()
-    expected_keys = {
-        "identity",
-        "current_role",
-        "education",
-        "career_target",
-        "skills",
-        "projects",
-        "work_history",
-        "sensitive_topics",
-    }
-    assert expected_keys.issubset(facts.keys())
+def test_skill_categories_are_the_canonical_whitelist():
+    skills = load()["skills"]
+    categorized = [item for group in skills["categories"].values() for item in group]
+    assert categorized == skills["confirmed"]
+    assert len(categorized) == len(set(categorized))
+    assert "applied AI/LLM tooling" not in categorized
 
 
-def test_skills_confirmed_is_nonempty_list_of_strings():
-    facts = load_facts()
-    confirmed = facts["skills"]["confirmed"]
-    assert isinstance(confirmed, list)
-    assert len(confirmed) > 0
-    assert all(isinstance(s, str) for s in confirmed)
+def test_skill_evidence_references_real_fact_ids():
+    facts = load()
+    valid_ids = set(build_fact_index(facts))
+    skills = facts["skills"]
+    assert set(skills["evidence"]) == set(skills["confirmed"])
+    for skill, source_ids in skills["evidence"].items():
+        assert source_ids, skill
+        assert set(source_ids) <= valid_ids, skill
 
 
-def test_projects_have_all_five_keys():
-    facts = load_facts()
-    expected_keys = {"name", "one_liner", "stack", "details", "outcomes"}
-    for project in facts["projects"]:
-        assert expected_keys.issubset(project.keys())
+def test_floorplan_public_and_enterprise_versions_are_distinct():
+    floorplan = next(project for project in load()["projects"] if project["id"] == "PROJ-FP")
+    text = " ".join(floorplan["outcomes"]).lower()
+    assert "enterprise version" in text
+    assert "not public" in text
+    assert "portfolio copy" in text
 
 
-def test_sensitive_topics_values_are_dicts_with_id_and_response_text():
-    facts = load_facts()
-    for key, value in facts["sensitive_topics"].items():
-        assert isinstance(value, dict)
-        assert "id" in value
-        response_fields = [v for k, v in value.items() if k != "id" and isinstance(v, str)]
-        assert len(response_fields) > 0
-        for text in response_fields:
-            if text == "":
-                print(f"WARNING: sensitive_topics.{key} has an empty response field")
-
-
-def test_career_target_has_text():
-    facts = load_facts()
-    assert isinstance(facts["career_target"], dict)
-    assert facts["career_target"].get("text")
+def test_sensitive_and_contact_policies_do_not_invite_volunteering():
+    facts = load()
+    assert "only" in facts["identity"]["contact_policy"].lower()
+    assert "do not volunteer" in facts["sensitive_topics"]["policy"].lower()

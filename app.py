@@ -1,20 +1,35 @@
-import streamlit as st
+from __future__ import annotations
 
-from citations import CitationStreamFilter
-from llm_client import get_reply_stream
+import html
+import os
+
+import streamlit as st
+from streamlit.errors import StreamlitSecretNotFoundError
+
+from llm_client import get_reply
 from prompt_builder import build_system_prompt, load_facts
+from response_model import LLMReply, build_fact_index
 from style import STYLE
 
 st.set_page_config(page_title="WilOS", page_icon="💬")
 st.markdown(STYLE, unsafe_allow_html=True)
 
-api_key = st.secrets.get("ANTHROPIC_API_KEY", "")
+api_key = os.getenv("ANTHROPIC_API_KEY", "")
 if not api_key:
-    st.error("API key not configured — see README.")
+    try:
+        api_key = st.secrets.get("ANTHROPIC_API_KEY", "")
+    except StreamlitSecretNotFoundError:
+        api_key = ""
+if not api_key:
+    st.error("API key not configured. See README.")
     st.stop()
 
+if "facts" not in st.session_state:
+    st.session_state["facts"] = load_facts()
+if "fact_index" not in st.session_state:
+    st.session_state["fact_index"] = build_fact_index(st.session_state["facts"])
 if "system_prompt" not in st.session_state:
-    st.session_state["system_prompt"] = build_system_prompt(load_facts())
+    st.session_state["system_prompt"] = build_system_prompt(st.session_state["facts"])
 if "messages" not in st.session_state:
     st.session_state["messages"] = []
 if "pending_user_input" not in st.session_state:
@@ -23,76 +38,78 @@ if "pending_user_input" not in st.session_state:
 is_empty = not st.session_state["messages"]
 
 if not is_empty:
-    # Same wordmark markup as the hero so the Fidelity-green "OS" stays
-    # consistent across the hero -> chat state change (the --chat modifier
-    # only adjusts bottom spacing).
     st.markdown(
         '<div class="wilos-title wilos-title--chat">Wil<span>OS</span></div>',
         unsafe_allow_html=True,
     )
 
-REFUSAL_MARKERS = [
-    "haven't worked with", "haven't used", "don't claim",
-    "won't claim", "can't claim", "haven't done",
-    "can't do that", "verified background",
-]
 
-
-def is_refusal(text: str) -> bool:
-    lowered = text.lower()
-    return any(marker in lowered for marker in REFUSAL_MARKERS)
-
-
-def render_marker(text: str, keys) -> None:
-    if is_refusal(text):
+def render_marker(response_type: str, source_ids: list[str] | tuple[str, ...]) -> None:
+    if response_type in {"unsupported", "off_topic"}:
         st.markdown(
             '<div class="askwil-marker askwil-marker--refusal">outside verified facts</div>',
             unsafe_allow_html=True,
         )
-    elif keys:
-        label = "Source: " + ", ".join(k.replace("_", " ") for k in keys)
+        if response_type == "off_topic" or not source_ids:
+            return
+    if response_type == "error":
         st.markdown(
-            f'<div class="askwil-marker askwil-marker--source">{label}</div>',
+            '<div class="askwil-marker askwil-marker--refusal">temporary response error</div>',
             unsafe_allow_html=True,
         )
-    elif keys == []:
+        return
+
+    labels = [st.session_state["fact_index"].get(source_id, source_id) for source_id in source_ids]
+    if labels:
+        label = "Sources: " + ", ".join(labels)
         st.markdown(
-            '<div class="askwil-marker askwil-marker--source">from verified facts</div>',
+            f'<div class="askwil-marker askwil-marker--source">{html.escape(label)}</div>',
             unsafe_allow_html=True,
         )
-    # keys is None (citation parsing failed): no citation line, per spec —
-    # the answer still displays normally, it just has no source caption.
 
 
 def render_history() -> None:
     for message in st.session_state["messages"]:
         if message["role"] == "assistant":
             with st.chat_message("assistant", avatar="💬"):
-                st.markdown('<div class="askwil-label">Wil</div>', unsafe_allow_html=True)
+                st.markdown('<div class="askwil-label">WilOS</div>', unsafe_allow_html=True)
                 st.write(message["content"])
-                render_marker(message["content"], message.get("sources"))
+                render_marker(message.get("response_type", "grounded"), message.get("source_ids", []))
         else:
             with st.chat_message("user"):
                 st.write(message["content"])
 
 
-def render_pending_reply() -> None:
-    last_12_messages = [
-        {"role": m["role"], "content": m["content"]}
-        for m in st.session_state["messages"][-12:]
+def conversation_messages() -> list[dict]:
+    recent = [
+        {"role": message["role"], "content": message["content"]}
+        for message in st.session_state["messages"][-12:]
     ]
-    if last_12_messages and last_12_messages[0]["role"] != "user":
-        last_12_messages = last_12_messages[1:]
+    if recent and recent[0]["role"] != "user":
+        recent = recent[1:]
+    return recent
 
+
+def render_pending_reply() -> None:
     with st.chat_message("assistant", avatar="💬"):
-        st.markdown('<div class="askwil-label">Wil</div>', unsafe_allow_html=True)
-        citation_filter = CitationStreamFilter(
-            get_reply_stream(api_key, st.session_state["system_prompt"], last_12_messages)
-        )
-        display_text = st.write_stream(citation_filter)
-        render_marker(display_text, citation_filter.keys)
+        st.markdown('<div class="askwil-label">WilOS</div>', unsafe_allow_html=True)
+        with st.spinner("Checking the verified record..."):
+            reply: LLMReply = get_reply(
+                api_key,
+                st.session_state["system_prompt"],
+                conversation_messages(),
+                set(st.session_state["fact_index"]),
+            )
+        st.write(reply.answer)
+        render_marker(reply.response_type, reply.source_ids)
+
     st.session_state["messages"].append(
-        {"role": "assistant", "content": display_text, "sources": citation_filter.keys}
+        {
+            "role": "assistant",
+            "content": reply.answer,
+            "response_type": reply.response_type,
+            "source_ids": list(reply.source_ids),
+        }
     )
     st.session_state["pending_user_input"] = None
 
@@ -105,35 +122,34 @@ QUICK_ACTIONS = [
 ]
 
 
-def render_quick_actions(container, key_prefix):
+def render_quick_actions(container, key_prefix: str):
     clicked = None
-    cols = container.columns(4)
-    for col, (label, prompt) in zip(cols, QUICK_ACTIONS):
-        if col.button(label, key=f"{key_prefix}_{label.replace(' ', '_').lower()}"):
+    columns = container.columns(4)
+    for column, (label, prompt) in zip(columns, QUICK_ACTIONS):
+        if column.button(label, key=f"{key_prefix}_{label.replace(' ', '_').lower()}"):
             clicked = prompt
     return clicked
 
 
-def render_bottom_bar(key_prefix):
+def render_bottom_bar(key_prefix: str):
     with st.bottom:
         with st.container(key="wilos_bottom"):
             value = st.chat_input(
-                "Ask about Wil's background, skills, or projects",
+                "Ask about Wil's background, projects, interests, or role fit",
                 key=f"{key_prefix}_chat_input",
             )
             clicked = render_quick_actions(st, key_prefix)
             return clicked or value
 
 
-def submit_input(text):
+def submit_input(text: str) -> None:
     if len(st.session_state["messages"]) >= 60:
         st.warning(
-            "This session has hit its message limit — feel free to refresh "
-            "to start a new one, or reach Wil directly via the links in his "
-            "resume."
+            "This session has hit its message limit. Refresh to start a new one, "
+            "or use the contact links in Wil's resume."
         )
     elif len(text) > 1000:
-        st.warning("That message is too long for this bot — could you shorten it?")
+        st.warning("That message is too long for this bot. Please shorten it.")
     else:
         st.session_state["messages"].append({"role": "user", "content": text})
         st.session_state["pending_user_input"] = text
@@ -144,7 +160,10 @@ if is_empty:
     with st.container(key="wilos_hero"):
         st.markdown('<div class="wilos-title">Wil<span>OS</span></div>', unsafe_allow_html=True)
         st.markdown('<div class="wilos-subtitle">Ready when you are.</div>', unsafe_allow_html=True)
-        user_input = st.chat_input("Ask about Wil's background, skills, or projects", key="hero_chat_input")
+        user_input = st.chat_input(
+            "Ask about Wil's background, projects, interests, or role fit",
+            key="hero_chat_input",
+        )
         clicked = render_quick_actions(st, "hero")
         if clicked:
             user_input = clicked
