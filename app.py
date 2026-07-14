@@ -139,6 +139,12 @@ def render_quick_actions(container, key_prefix: str):
 def render_bottom_bar(key_prefix: str):
     with st.bottom:
         with st.container(key="wilos_bottom"):
+            st.markdown(
+                '<div class="wilos-subtitle wilos-subtitle--chat">'
+                "Ask your own question below, or choose a starting point."
+                "</div>",
+                unsafe_allow_html=True,
+            )
             value = st.chat_input(
                 "Ask about Wil's background, projects, interests, or role fit",
                 key=f"{key_prefix}_chat_input",
