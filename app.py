@@ -131,7 +131,7 @@ def render_quick_actions(container, key_prefix: str):
     clicked = None
     columns = container.columns(4)
     for column, (label, prompt) in zip(columns, QUICK_ACTIONS):
-        if column.button(label, key=f"{key_prefix}_{label.replace(' ', '_').lower()}"):
+        if column.button(label, key=f"{key_prefix}_{label.replace(' ', '_').lower()}", use_container_width=True):
             clicked = prompt
     return clicked
 
