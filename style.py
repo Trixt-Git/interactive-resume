@@ -13,9 +13,10 @@ STYLE = r'''
 .wilos-title { font-size: clamp(2.8rem, 9vw, 5rem); font-weight: 750; letter-spacing: -0.06em; text-align: center; color: var(--wilos-ink); margin-top: 8vh; }
 .wilos-title span { color: var(--wilos-green); }
 .wilos-title--chat { font-size: 2rem; text-align: left; margin: 0 0 1rem; }
+.wilos-title--chat span { font-size: 1.2em; }
 .wilos-subtitle { text-align: center; color: var(--wilos-muted); font-size: 1.05rem; margin: .2rem 0 1.5rem; }
 .wilos-subtitle--chat { font-size: .85rem; margin: .1rem 0 .4rem; padding-left: 1rem; text-align: left; }
-.askwil-label { color: var(--wilos-green); font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: .25rem; }
+.askwil-label { color: var(--wilos-green); font-size: .72rem; font-weight: 700; letter-spacing: .08em; margin-bottom: .25rem; }
 .askwil-marker { display: inline-block; margin-top: .55rem; padding: .2rem .55rem; border-radius: 999px; font-size: .72rem; line-height: 1.3; }
 .askwil-marker--source { color: #365A49; background: #E8F1EC; }
 .askwil-marker--refusal { color: #72543D; background: #F5ECE3; }
