@@ -53,6 +53,7 @@ html, body, [data-testid="stAppViewContainer"] { font-family: 'Inter', -apple-sy
 .st-key-wilos_hero { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 35vh; text-align: center; }
 .st-key-wilos_hero [data-testid="stHorizontalBlock"], .st-key-wilos_bottom [data-testid="stHorizontalBlock"] { justify-content: center; gap: .5rem; }
 .st-key-wilos_hero [data-testid="stColumn"], .st-key-wilos_bottom [data-testid="stColumn"] { width: auto !important; flex: 0 0 auto !important; }
+.st-key-wilos_hero .stButton > button, .st-key-wilos_bottom .stButton > button { min-width: 6.5rem; }
 
 @media (max-width: 640px) {
   [data-testid="stHorizontalBlock"] { flex-direction: row !important; flex-wrap: nowrap !important; gap: .3rem !important; }
