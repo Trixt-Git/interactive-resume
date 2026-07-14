@@ -61,9 +61,14 @@ def render_marker(response_type: str, source_ids: list[str] | tuple[str, ...]) -
 
     labels = [st.session_state["fact_index"].get(source_id, source_id) for source_id in source_ids]
     if labels:
-        label = "Sources: " + ", ".join(labels)
+        count = len(labels)
+        noun = "source" if count == 1 else "sources"
+        items = "".join(f"<li>{html.escape(label)}</li>" for label in labels)
         st.markdown(
-            f'<div class="askwil-marker askwil-marker--source">{html.escape(label)}</div>',
+            '<details class="askwil-sources">'
+            f'<summary>✓ Verified from Wil\'s background · {count} {noun}</summary>'
+            f"<ul>{items}</ul>"
+            "</details>",
             unsafe_allow_html=True,
         )
 

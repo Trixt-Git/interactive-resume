@@ -18,6 +18,11 @@ STYLE = r'''
 .askwil-marker { display: inline-block; margin-top: .55rem; padding: .2rem .55rem; border-radius: 999px; font-size: .72rem; line-height: 1.3; }
 .askwil-marker--source { color: #365A49; background: #E8F1EC; }
 .askwil-marker--refusal { color: #72543D; background: #F5ECE3; }
+.askwil-sources { margin-top: .55rem; color: #365A49; font-size: .72rem; }
+.askwil-sources summary { display: inline-block; padding: .2rem .55rem; border-radius: 999px; background: #E8F1EC; cursor: pointer; list-style: none; }
+.askwil-sources summary::-webkit-details-marker { display: none; }
+.askwil-sources ul { margin: .45rem 0 0 .7rem; padding-left: 1rem; color: var(--wilos-muted); }
+.askwil-sources li { margin: .15rem 0; }
 [data-testid="stChatMessage"] { background: var(--wilos-panel); border: 1px solid var(--wilos-border); border-radius: 14px; padding: .35rem .6rem; margin-bottom: .7rem; }
 [data-testid="stBottom"] { background: color-mix(in srgb, var(--wilos-paper) 92%, transparent); border-top: 1px solid var(--wilos-border); }
 .stButton > button { border-radius: 999px; border-color: var(--wilos-border); }
