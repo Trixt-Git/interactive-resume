@@ -146,7 +146,7 @@ def render_bottom_bar(key_prefix: str):
                 unsafe_allow_html=True,
             )
             value = st.chat_input(
-                "",
+                "What would you like to know about Wil?",
                 key=f"{key_prefix}_chat_input",
             )
             clicked = render_quick_actions(st, key_prefix)
@@ -175,7 +175,7 @@ if is_empty:
             unsafe_allow_html=True,
         )
         user_input = st.chat_input(
-            "",
+            "What would you like to know about Wil?",
             key="hero_chat_input",
         )
         clicked = render_quick_actions(st, "hero")
