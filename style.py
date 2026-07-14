@@ -14,7 +14,7 @@ STYLE = r'''
 .wilos-title span { color: var(--wilos-green); }
 .wilos-title--chat { font-size: 2rem; text-align: left; margin: 0 0 1rem; }
 .wilos-subtitle { text-align: center; color: var(--wilos-muted); font-size: 1.05rem; margin: .2rem 0 1.5rem; }
-.wilos-subtitle--chat { font-size: .85rem; margin: .1rem 0 .4rem; text-align: left; }
+.wilos-subtitle--chat { font-size: .85rem; margin: .1rem 0 .4rem; padding-left: 1rem; text-align: left; }
 .askwil-label { color: var(--wilos-green); font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: .25rem; }
 .askwil-marker { display: inline-block; margin-top: .55rem; padding: .2rem .55rem; border-radius: 999px; font-size: .72rem; line-height: 1.3; }
 .askwil-marker--source { color: #365A49; background: #E8F1EC; }
