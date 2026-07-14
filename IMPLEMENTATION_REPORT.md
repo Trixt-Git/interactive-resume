@@ -12,14 +12,14 @@
 - Expanded live evaluation with grounding, answer-quality, conversation, and boundary suites.
 - Updated Streamlit app, architecture page, README, build specification, and developer instructions.
 
-## Testing performed on 2026-07-13
+## Verification through 2026-07-14
 
 ### Clean environment
 
-A new virtual environment was created and populated from `requirements.txt`.
+A clean virtual environment was populated from the development dependencies.
 
 - dependency check: no broken requirements
-- pytest: 23 passed
+- pytest: 25 passed
 - Python compilation: passed
 
 ### Streamlit
@@ -52,9 +52,9 @@ API key not configured. See README.
 
 A regression test now covers both missing-key and environment-key startup.
 
-## Not run
+## Live evaluation
 
-The 29-case live model evaluation was not run because no real Anthropic API key was provided in the project snapshot. The older 24/24 result was produced by the retired citation-tag architecture and is not a validation result for v2.
+A paid one-pass live evaluation (`EVAL_REPEATS=1`) passed 29/29 on July 13, 2026: grounding 8/8, answer quality 5/5, boundaries 13/13, and conversation 3/3. The older 24/24 result was produced by the retired citation-tag architecture.
 
 Run a development pass with:
 
@@ -62,7 +62,7 @@ Run a development pass with:
 EVAL_REPEATS=1 python eval_honesty.py
 ```
 
-Then run the default three-repeat gate before publishing a result:
+The default three-repeat gate has not been run for the current version because it makes 87 paid model calls. Run it only when explicitly approved:
 
 ```bash
 python eval_honesty.py

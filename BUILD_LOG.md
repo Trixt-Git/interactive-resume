@@ -102,3 +102,15 @@ chronological order; nothing is rewritten after the fact.*
 - Added Streamlit startup tests.
 - Testing exposed a missing-secrets failure: `st.secrets.get()` raised before the intended configuration message when no secrets file existed. Fixed by checking the environment first and handling `StreamlitSecretNotFoundError`.
 - Reconciled README, BUILD_MAP, CLAUDE instructions, and the architecture page with the structured-output implementation.
+
+## Production hardening and UI refinement — 2026-07-13 to 2026-07-14
+
+- Published WilOS at `https://wilresume.streamlit.app/` from `main`.
+- Completed a paid one-pass behavioral evaluation with 29/29 cases passing.
+- Fixed broad career answers being rejected when they contained more than four valid source IDs.
+- Added explicit provider timeouts, controlled retry behavior, and flushed request-error logging.
+- Replaced long inline source lists with a compact expandable verified-source marker.
+- Refined landing and active-chat guidance, wordmark sizing, and assistant-label casing.
+- Refined the current-role analytics narrative and required broad career answers to mention the in-progress master's program.
+- Removed the phone number from the public fact corpus and contact responses.
+- Split production and development dependencies, pinned deployed versions, and added free mocked GitHub Actions tests.

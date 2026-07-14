@@ -9,7 +9,7 @@ Read `BUILD_MAP.md` before making architectural changes. Record meaningful chang
 ## Commands
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirements-dev.txt
 pytest -q
 streamlit run app.py
 EVAL_REPEATS=1 python eval_honesty.py  # real API calls
@@ -57,7 +57,7 @@ The prompt must preserve these behaviors:
 6. Supported personal facts may be answered; unsupported preferences may not be inferred.
 7. Answers lead with the answer, use minimal evidence, and do not recite the full resume.
 8. Behavioral questions use one relevant story.
-9. Contact information is not volunteered.
+9. The contact email is not volunteered. The public fact corpus does not contain a phone number.
 
 ### UI behavior
 

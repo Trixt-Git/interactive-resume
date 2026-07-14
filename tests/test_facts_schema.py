@@ -46,4 +46,5 @@ def test_floorplan_public_and_enterprise_versions_are_distinct():
 def test_sensitive_and_contact_policies_do_not_invite_volunteering():
     facts = load()
     assert "only" in facts["identity"]["contact_policy"].lower()
+    assert "phone" not in facts["identity"]["contact"]
     assert "do not volunteer" in facts["sensitive_topics"]["policy"].lower()

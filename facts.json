@@ -15,10 +15,9 @@
       "linkedin": "https://www.linkedin.com/in/wil-uhlir/"
     },
     "contact": {
-      "email": "Uhlirc13@gmail.com",
-      "phone": "843-822-8070"
+      "email": "Uhlirc13@gmail.com"
     },
-    "contact_policy": "Only provide the email address or phone number when the user explicitly asks how to contact Wil."
+    "contact_policy": "Only provide the email address when the user explicitly asks how to contact Wil."
   },
   "career_narrative": {
     "id": "NAR-01",

@@ -36,6 +36,7 @@ Build a short recruiter-facing experience that answers questions about Wil Uhlir
 
 ```text
 wilos/
+├── .github/workflows/tests.yml
 ├── .streamlit/
 │   ├── config.toml
 │   └── secrets.toml.example
@@ -46,7 +47,7 @@ wilos/
 │   ├── test_llm_client.py
 │   ├── test_prompt_builder.py
 │   └── test_response_model.py
-├── 1_How_I_Built_This.py
+├── pages/1_How_I_Built_This.py
 ├── app.py
 ├── BUILD_LOG.md
 ├── BUILD_MAP.md
@@ -57,6 +58,7 @@ wilos/
 ├── prompt_builder.py
 ├── README.md
 ├── requirements.txt
+├── requirements-dev.txt
 ├── response_model.py
 ├── streamlit_app.py
 └── style.py
@@ -89,7 +91,7 @@ The enterprise version is internal and not public. A separate public portfolio c
 
 ### Disclosure controls
 
-- Contact details are provided only when directly requested.
+- The contact email is provided only when directly requested; the public facts do not include a phone number.
 - Sensitive stored responses are used only for the matching direct question.
 - Stories marked `only_when_relevant` are not used as generic color.
 - Stories marked `do_not_volunteer` are never surfaced unless the specific question calls for them.
@@ -131,7 +133,7 @@ Validation rules:
 - non-empty answer
 - recognized response type
 - no duplicate source IDs
-- no more than four source IDs
+- every source ID must exist in the fact index; broad career answers may cite more than four valid records
 - every source ID must exist in the fact index
 - `grounded`, `sensitive`, and `identity` require sources
 - `off_topic` must have no sources
@@ -141,7 +143,7 @@ Validation rules:
 
 - Maximum 60 stored messages, representing 30 exchanges.
 - Maximum input length of 1,000 characters.
-- The app displays fact labels derived from exact source IDs.
+- The app displays a compact verified-source count with expandable labels derived from exact source IDs.
 - Unsupported and off-topic responses receive an “outside verified facts” marker.
 - Missing API configuration displays a friendly error rather than throwing an exception.
 - The environment variable is checked before Streamlit secrets.
@@ -170,6 +172,8 @@ The pytest suite checks:
 - boundaries: 13
 
 The default is three runs per case, or 87 total model calls. Development runs may use `EVAL_REPEATS=1`. A deploy result is valid only for the exact facts, prompt, model, and code version that produced it.
+
+The July 13, 2026 one-pass production run passed 29/29. The default three-repeat gate has not been run for the current version.
 
 ## 10. Definition of done for v2.0
 
