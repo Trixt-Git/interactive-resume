@@ -48,7 +48,6 @@ wilos/
 │   ├── test_prompt_builder.py
 │   └── test_response_model.py
 ├── pages/1_How_I_Built_This.py
-├── app.py
 ├── BUILD_LOG.md
 ├── BUILD_MAP.md
 ├── CLAUDE.md
@@ -61,7 +60,8 @@ wilos/
 ├── requirements-dev.txt
 ├── response_model.py
 ├── streamlit_app.py
-└── style.py
+├── style.py
+└── WilOS.py
 ```
 
 ## 5. Facts contract

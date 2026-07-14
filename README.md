@@ -57,7 +57,7 @@ ANTHROPIC_API_KEY = "sk-ant-..."
 Then run:
 
 ```bash
-streamlit run app.py
+streamlit run WilOS.py
 ```
 
 The model can be changed without editing code:
@@ -105,7 +105,7 @@ The current evaluation contains 29 cases across grounding, answer quality, multi
 - `prompt_builder.py` — system prompt and response instructions
 - `response_model.py` — response schema, fact index, and validation
 - `llm_client.py` — Anthropic API call
-- `app.py` — Streamlit UI and session handling
+- `WilOS.py` — Streamlit UI and session handling
 - `eval_honesty.py` — live behavioral evaluation
 - `pages/1_How_I_Built_This.py` — architecture case study page
 - `BUILD_MAP.md` — current architecture specification

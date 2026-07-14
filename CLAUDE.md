@@ -11,7 +11,7 @@ Read `BUILD_MAP.md` before making architectural changes. Record meaningful chang
 ```bash
 pip install -r requirements-dev.txt
 pytest -q
-streamlit run app.py
+streamlit run WilOS.py
 EVAL_REPEATS=1 python eval_honesty.py  # real API calls
 ```
 
@@ -61,7 +61,7 @@ The prompt must preserve these behaviors:
 
 ### UI behavior
 
-`app.py` stores visible conversation text plus structured metadata in `st.session_state`. It sends the last 12 visible messages to the model. It supports a 60-message session cap and a 1,000-character input cap.
+`WilOS.py` stores visible conversation text plus structured metadata in `st.session_state`. It sends the last 12 visible messages to the model. It supports a 60-message session cap and a 1,000-character input cap.
 
 The application should show a friendly configuration error when no API key exists. Do not call `st.secrets.get()` without handling `StreamlitSecretNotFoundError`.
 
