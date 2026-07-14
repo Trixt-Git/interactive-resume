@@ -27,7 +27,9 @@ STYLE = r'''
 .askwil-sources li { margin: .15rem 0; }
 [data-testid="stChatMessage"] { background: var(--wilos-panel); border: 1px solid var(--wilos-border); border-radius: 14px; padding: .35rem .6rem; margin-bottom: .7rem; }
 [data-testid="stBottom"] { background: color-mix(in srgb, var(--wilos-paper) 92%, transparent); border-top: 1px solid var(--wilos-border); }
-.stButton > button { border-radius: 999px; border-color: var(--wilos-border); }
+.stButton > button { border-radius: 999px; border: 1px solid var(--wilos-border); background: var(--wilos-panel); color: var(--wilos-green); font-weight: 600; transition: background .15s ease, border-color .15s ease; }
+.stButton > button:hover { background: #E8F1EC; border-color: var(--wilos-green); }
+.stButton > button:focus-visible { outline: 2px solid var(--wilos-green); outline-offset: 2px; }
 .wilos-flow { display: grid; justify-items: center; gap: .4rem; margin: 1rem 0; }
 .wilos-flow-step { width: min(100%, 680px); padding: .8rem 1rem; border: 1px solid var(--wilos-border); background: var(--wilos-panel); border-radius: 12px; }
 .wilos-flow-arrow { color: var(--wilos-green); font-weight: 700; }
