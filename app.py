@@ -141,12 +141,12 @@ def render_bottom_bar(key_prefix: str):
         with st.container(key="wilos_bottom"):
             st.markdown(
                 '<div class="wilos-subtitle wilos-subtitle--chat">'
-                "Ask your own question below, or choose a starting point."
+                "Ask your own question below, or choose a starting point:"
                 "</div>",
                 unsafe_allow_html=True,
             )
             value = st.chat_input(
-                "Ask about Wil's background, projects, interests, or role fit",
+                "",
                 key=f"{key_prefix}_chat_input",
             )
             clicked = render_quick_actions(st, key_prefix)
@@ -171,11 +171,11 @@ if is_empty:
     with st.container(key="wilos_hero"):
         st.markdown('<div class="wilos-title">Wil<span>OS</span></div>', unsafe_allow_html=True)
         st.markdown(
-            '<div class="wilos-subtitle">Ask your own question below, or choose a starting point.</div>',
+            '<div class="wilos-subtitle">Ask your own question below, or choose a starting point:</div>',
             unsafe_allow_html=True,
         )
         user_input = st.chat_input(
-            "Ask about Wil's background, projects, interests, or role fit",
+            "",
             key="hero_chat_input",
         )
         clicked = render_quick_actions(st, "hero")
