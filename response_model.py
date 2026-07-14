@@ -127,8 +127,6 @@ def parse_structured_reply(raw_text: str, valid_source_ids: Iterable[str]) -> LL
     source_ids = [canonical.get(item.lower(), item) for item in source_ids]
     if len(source_ids) != len(set(source_ids)):
         raise ResponseValidationError("source_ids may not contain duplicates")
-    if len(source_ids) > 4:
-        raise ResponseValidationError("source_ids may contain at most four ids")
     unknown = [item for item in source_ids if item not in valid]
     if unknown:
         raise ResponseValidationError(f"Unknown source ids: {', '.join(unknown)}")

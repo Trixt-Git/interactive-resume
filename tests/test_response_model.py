@@ -22,6 +22,17 @@ def test_schema_restricts_source_ids_to_real_ids():
     assert schema["additionalProperties"] is False
 
 
+def test_accepts_broad_reply_with_more_than_four_valid_sources():
+    source_ids = sorted(VALID_IDS)[:5]
+    raw = json.dumps({
+        "answer": "Here is a broad career overview.",
+        "response_type": "grounded",
+        "source_ids": source_ids,
+    })
+    reply = parse_structured_reply(raw, VALID_IDS)
+    assert reply.source_ids == tuple(source_ids)
+
+
 def test_parses_grounded_reply_and_normalizes_enum_casing():
     raw = json.dumps({
         "answer": "FloorPlan is a decision-support application.",
