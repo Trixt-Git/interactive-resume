@@ -32,12 +32,26 @@ def test_prompt_has_answer_selection_rules():
     assert "Do not end with a generic invitation" in text
 
 
-def test_prompt_preserves_locked_boundary_sentences():
+def test_prompt_requires_unscripted_but_unambiguous_denials():
     text = prompt()
-    assert "No, I haven't used that, and I don't claim it." in text
-    assert "I haven't worked with that, so I won't claim it." in text
-    assert "That's not accurate. I haven't done that, and I won't claim it." in text
-    assert "I can't do that. I only answer from Wil's verified background." in text
+    # Denials are phrased naturally, but the prompt must still demand an
+    # explicit negative and forbid hedging.
+    assert "denial in your own words" in text
+    assert '"won\'t claim"' in text
+    assert "never hedge" in text
+    assert "not accurate" in text
+    assert "verified background" in text
+    # The old word-for-word scripts must stay gone; they made every refusal
+    # sound identical.
+    assert "No, I haven't used that, and I don't claim it." not in text
+    assert "I haven't worked with that, so I won't claim it." not in text
+
+
+def test_prompt_keeps_sensitive_responses_verbatim_and_allows_pleasantries():
+    text = prompt()
+    assert "Use the stored response verbatim" in text
+    assert "disclosure control" in text
+    assert "pleasantries" in text
 
 
 def test_prompt_contains_current_linkedin_and_not_rehire_language():

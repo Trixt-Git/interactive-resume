@@ -27,6 +27,7 @@ Build a short recruiter-facing experience that answers questions about Wil Uhlir
 | Model override | `ANTHROPIC_MODEL` environment variable | Enables controlled A/B testing without code edits |
 | Facts | Full JSON injected into system prompt | The corpus is small; retrieval adds failure modes without useful recall gains |
 | Output | JSON schema via `output_config.format` | Prevents malformed citation-shaped prose and narrows the response contract |
+| Sampling | Temperature 0.5 | Looser, more human phrasing; the schema, validation, and eval anchors keep grounding intact |
 | Sources | Stable fact IDs | Allows precise validation and readable evidence labels |
 | History | Last 12 visible messages | Enough context for short follow-ups without unnecessary token growth |
 | Caching | Ephemeral cache control on the system block | Reuses the unchanging fact corpus when provider thresholds are met |
@@ -112,8 +113,24 @@ The answer strategy requires the model to:
 - use the smallest useful evidence set
 - choose one behavioral story rather than blending several
 - connect evidence to role requirements instead of listing keywords
+- treat follow-ups as a continuing conversation instead of restarting context
 - stay under 150 words unless asked for detail
 - avoid generic “ask me more” closings
+
+### Denial phrasing
+
+Boundary denials are behavioral requirements, not scripts. A denial must open
+with an explicit negative ("haven't used," "haven't worked with," "won't
+claim") and must never hedge, but the sentence is the model's own so repeated
+refusals do not sound identical. Two categories remain word-for-word:
+
+- Stored `sensitive_topics` responses are reproduced verbatim as a disclosure
+  control.
+- The out-of-scope response is used verbatim for unsupported casual questions.
+
+Pure pleasantries (greetings, thanks, goodbyes) receive one brief natural
+sentence classified `off_topic` with no sources, rather than the stored
+out-of-scope response.
 
 ## 7. Structured response contract
 
@@ -164,16 +181,19 @@ The pytest suite checks:
 
 ### Live behavioral suite
 
-`eval_honesty.py` contains 29 cases divided into:
+`eval_honesty.py` contains 30 cases divided into:
 
 - grounding: 8
 - answer quality: 5
-- conversation: 3
+- conversation: 4
 - boundaries: 13
 
-The default is three runs per case, or 87 total model calls. Development runs may use `EVAL_REPEATS=1`. A deploy result is valid only for the exact facts, prompt, model, and code version that produced it.
+The default is three runs per case, or 90 total model calls. Development runs may use `EVAL_REPEATS=1`. A deploy result is valid only for the exact facts, prompt, model, and code version that produced it.
 
-The July 13, 2026 one-pass production run passed 29/29. The default three-repeat gate has not been run for the current version.
+Unsupported-claim cases accept any phrasing that contains one of the shared
+`DENIAL_MARKERS` anchors, matching the prompt's unscripted-denial contract.
+
+The July 13, 2026 one-pass production run passed 29/29. That run predates the July 15 naturalness revision (unscripted denials, temperature 0.5, pleasantry handling), so a fresh live run is required before publishing a new behavioral score.
 
 ## 10. Definition of done for v2.0
 

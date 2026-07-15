@@ -43,6 +43,13 @@ html, body, [data-testid="stAppViewContainer"] { font-family: 'Inter', -apple-sy
 .stButton > button:hover { background: var(--wilos-green); color: #FFFFFF; box-shadow: 0 4px 10px rgba(0,117,74,.25); }
 .stButton > button:focus-visible { outline: 2px solid var(--wilos-green); outline-offset: 2px; }
 .stButton > button:active { transform: scale(0.95); box-shadow: 0 1px 2px rgba(26,23,18,.08); }
+.wilos-demo { border: 1px solid var(--wilos-border); background: var(--wilos-panel); border-radius: 14px; padding: 1rem 1.15rem; margin: 1rem 0 1.4rem; }
+.wilos-demo-q { color: var(--wilos-ink); font-weight: 600; margin-bottom: .7rem; }
+.wilos-demo-q span { color: var(--wilos-muted); font-weight: 400; }
+.wilos-demo-a { color: var(--wilos-ink); line-height: 1.6; }
+.wilos-demo .askwil-label { margin-top: .2rem; }
+.wilos-try { display: grid; gap: .5rem; margin: .8rem 0 1.2rem; }
+.wilos-try-item { border: 1px solid var(--wilos-border); background: var(--wilos-panel); border-radius: 10px; padding: .6rem .9rem; color: var(--wilos-ink); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .85rem; }
 .wilos-flow { display: grid; justify-items: center; gap: .4rem; margin: 1rem 0; }
 .wilos-flow-step { width: min(100%, 680px); padding: .8rem 1rem; border: 1px solid var(--wilos-border); background: var(--wilos-panel); border-radius: 12px; }
 .wilos-flow-arrow { color: var(--wilos-green); font-weight: 700; }

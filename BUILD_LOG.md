@@ -114,3 +114,15 @@ chronological order; nothing is rewritten after the fact.*
 - Refined the current-role analytics narrative and required broad career answers to mention the in-progress master's program.
 - Removed the phone number from the public fact corpus and contact responses.
 - Split production and development dependencies, pinned deployed versions, and added free mocked GitHub Actions tests.
+
+## Naturalness revision — 2026-07-15
+
+- Replaced the word-for-word boundary denial scripts with a behavioral contract: denials must open with an explicit negative and never hedge, but the phrasing is the model's own so repeated refusals stop sounding identical. Sensitive stored responses and the out-of-scope response remain verbatim as disclosure controls.
+- Added a pleasantry carve-out: greetings, thanks, and goodbyes get one brief natural sentence classified `off_topic` with no sources, instead of the stored out-of-scope script.
+- Added follow-up continuity to the answer strategy: follow-ups continue the conversation instead of re-introducing established context, and may open with "Yes —" or "No —".
+- Rewrote the voice guidance to require contractions, varied sentence openings, and yes/no-first answers; rewrote the refusal few-shot examples in looser phrasing and added a multi-turn FloorPlan example and a pleasantry example.
+- Rewrote the out-of-scope response in `facts.json` with contractions while keeping the "outside my verified background" evaluation anchor.
+- Raised sampling temperature from 0.2 to 0.5 for looser phrasing; the schema, semantic validation, and eval anchors carry the grounding guarantees.
+- Broadened the unsupported-claim eval anchors into a shared `DENIAL_MARKERS` set and added a `pleasantry_close` conversation case (30 cases, 90 calls per full run). The 29/29 July 13 score predates this revision; a fresh live run is required before publishing a new score.
+- Rebuilt the How I Built This page: leads with the failure a naive resume bot exhibits, shows a real refusal exchange with its source label, gives prompt injection its own section, reports live suite counts imported from `eval_honesty.py`, explains prompt caching, and ends with "try to break it" prompts. Avoided `st.page_link` because the local and deployed entrypoints register different main pages.
+- Updated prompt tests for the unscripted-denial contract and added a smoke test for the How I Built This page.

@@ -18,3 +18,10 @@ def test_environment_api_key_renders_landing_page(monkeypatch):
         "Experience", "Projects", "Systems", "Role Fit"
     ]
     assert len(app.chat_input) == 1
+
+
+def test_how_i_built_this_page_renders():
+    app = AppTest.from_file("pages/1_How_I_Built_This.py", default_timeout=15)
+    app.run()
+    assert not app.exception
+    assert app.title[0].value == "How I Built This"
