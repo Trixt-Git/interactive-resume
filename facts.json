@@ -513,7 +513,7 @@
     },
     "out_of_scope": {
       "id": "ST-OOS",
-      "response": "That is outside my verified background, so I will not guess. I can answer questions about my experience, projects, education, skills, or role fit."
+      "response": "That's outside my verified background, so I won't guess. What I can speak to is my experience, projects, education, skills, and role fit."
     },
     "policy": "Use these stored responses only when the user directly asks about the matching topic. Do not volunteer them in general summaries or role-fit answers."
   }

@@ -46,7 +46,7 @@ def get_reply(
             response = client.messages.create(
                 model=MODEL,
                 max_tokens=600,
-                temperature=0.2,
+                temperature=0.5,
                 system=[
                     {
                         "type": "text",
