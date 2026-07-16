@@ -66,10 +66,10 @@ footer { display: none !important; }
 .wilos-flow { display: grid; justify-items: center; gap: .4rem; margin: 1rem 0; }
 .wilos-flow-step { width: min(100%, 680px); padding: .8rem 1rem; border: 1px solid var(--wilos-border); background: var(--wilos-panel); border-radius: 12px; }
 .wilos-flow-arrow { color: var(--wilos-green); font-weight: 700; }
-/* Pinned bottom-right to stay clear of the full-height left sidebar. High
-   z-index keeps it above the bottom input bar; pointer-events: none means it
-   never intercepts clicks. */
-.wilos-cup { position: fixed; right: 16px; bottom: 16px; z-index: 999999; pointer-events: none; opacity: .85; filter: drop-shadow(0 2px 3px rgba(26,23,18,.28)); animation: wilos-cup-float 4.5s ease-in-out infinite; }
+/* Pinned bottom-left, behind the full-height sidebar: it shows when the sidebar
+   is collapsed and is hidden when it's open — that's acceptable.
+   pointer-events: none so it never intercepts clicks. */
+.wilos-cup { position: fixed; left: 16px; bottom: 16px; z-index: 1000; pointer-events: none; opacity: .85; filter: drop-shadow(0 2px 3px rgba(26,23,18,.28)); animation: wilos-cup-float 4.5s ease-in-out infinite; }
 .wilos-cup svg { display: block; }
 @keyframes wilos-cup-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
 
