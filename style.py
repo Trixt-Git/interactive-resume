@@ -13,6 +13,19 @@ STYLE = r'''
 
 html, body, [data-testid="stAppViewContainer"] { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: -0.01em; color: var(--wilos-ink); background: var(--wilos-paper); }
 [data-testid="stHeader"] { height: 2.5rem; background: transparent; }
+
+/* Hide Streamlit's hosting chrome. The top-right toolbar/menu and Deploy
+   button are already trimmed by toolbarMode="minimal" in config.toml; these
+   rules hide the bottom-right Community Cloud viewer badge ("Hosted with
+   Streamlit" + the creator's GitHub avatar), the transient status widget, and
+   the legacy footer. The viewer badge is injected by Community Cloud and only
+   appears on the deployed app, not in local runs. */
+#MainMenu { visibility: hidden !important; }
+footer { display: none !important; }
+[data-testid="stToolbar"] { display: none !important; }
+[data-testid="stStatusWidget"] { display: none !important; }
+[data-testid="stAppDeployButton"] { display: none !important; }
+[class*="viewerBadge"] { display: none !important; }
 [data-testid="stSidebar"] { background: var(--wilos-panel); border-right: 1px solid var(--wilos-border); }
 [data-testid="stSidebarNavLink"] { border-radius: 8px; color: var(--wilos-muted); }
 [data-testid="stSidebarNavLink"]:hover { background: #E8F1EC; color: var(--wilos-green); }
