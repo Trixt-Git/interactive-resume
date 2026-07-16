@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import html
 import os
+import re
+import time
 
 import streamlit as st
 from streamlit.errors import StreamlitSecretNotFoundError
@@ -95,6 +97,27 @@ def conversation_messages() -> list[dict]:
     return recent
 
 
+# Seconds between words when a fresh reply is revealed. The reveal is purely
+# presentational: the answer is already complete and validated before the first
+# word shows. Kept small so long answers finish quickly.
+REVEAL_WORD_DELAY = 0.02
+
+
+def reveal_answer(answer: str):
+    """Yield an already-validated answer word by word for a natural typing feel.
+
+    Whitespace (including newlines) is preserved so markdown structure survives.
+    Nothing is streamed until get_reply has returned a validated response, so this
+    never renders text that later fails validation.
+    """
+    for token in re.split(r"(\s+)", answer):
+        if not token:
+            continue
+        yield token
+        if token.strip():
+            time.sleep(REVEAL_WORD_DELAY)
+
+
 def render_pending_reply() -> None:
     with st.chat_message("assistant", avatar="💬"):
         st.markdown('<div class="askwil-label">WilOS</div>', unsafe_allow_html=True)
@@ -105,7 +128,7 @@ def render_pending_reply() -> None:
                 conversation_messages(),
                 set(st.session_state["fact_index"]),
             )
-        st.write(reply.answer)
+        st.write_stream(reveal_answer(reply.answer))
         render_marker(reply.response_type, reply.source_ids)
 
     st.session_state["messages"].append(
