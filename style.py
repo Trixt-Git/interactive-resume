@@ -19,10 +19,12 @@ html, body, [data-testid="stAppViewContainer"] { font-family: 'Inter', -apple-sy
    rules hide the bottom-right Community Cloud viewer badge ("Hosted with
    Streamlit" + the creator's GitHub avatar), the transient status widget, and
    the legacy footer. The viewer badge is injected by Community Cloud and only
-   appears on the deployed app, not in local runs. */
+   appears on the deployed app, not in local runs.
+   NOTE: do not hide [data-testid="stToolbar"] wholesale — it contains the
+   control that reopens a collapsed sidebar, so hiding it strands the sidebar
+   closed. The Deploy button inside it is hidden individually below. */
 #MainMenu { visibility: hidden !important; }
 footer { display: none !important; }
-[data-testid="stToolbar"] { display: none !important; }
 [data-testid="stStatusWidget"] { display: none !important; }
 [data-testid="stAppDeployButton"] { display: none !important; }
 [class*="viewerBadge"] { display: none !important; }
