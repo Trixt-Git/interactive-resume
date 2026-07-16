@@ -176,6 +176,7 @@ Validation rules:
 - Maximum 60 stored messages, representing 30 exchanges.
 - Maximum input length of 1,000 characters.
 - The app displays a compact verified-source count with expandable labels derived from exact source IDs.
+- A fresh reply is revealed word by word via `st.write_stream`. The reveal is presentational only: `get_reply` returns a fully validated response first, so no unvalidated text is ever shown. Provider output is not token-streamed, because schema-constrained JSON cannot be safely displayed or source-validated mid-stream. History re-renders do not re-animate.
 - Unsupported and off-topic responses receive an “outside verified facts” marker.
 - Missing API configuration displays a friendly error rather than throwing an exception.
 - The environment variable is checked before Streamlit secrets.

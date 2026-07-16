@@ -172,8 +172,14 @@ expensive until prompt caching enters the picture: the unchanging block is marke
 cacheable, so repeat requests within a session reread it at a fraction of the cost
 of fresh input tokens.
 
-The app buffers the short structured response instead of streaming raw JSON. That
-trades a small amount of perceived speed for reliable parsing and a cleaner UI.
+The app buffers the full structured response and validates it before showing a
+single character, instead of streaming raw tokens as they arrive. Streaming would
+mean displaying half-formed JSON and, worse, revealing an answer before its source
+ids were validated — text that might then have to be retracted. So the answer is
+still typed out word by word for a natural feel, but that reveal is purely
+cosmetic: it begins only after a complete, validated reply is in hand. The honesty
+guarantee sets the ceiling on the UX, not the other way around.
+
 The enterprise FloorPlan application and company data remain private; only a
 separate portfolio copy is public.
 """

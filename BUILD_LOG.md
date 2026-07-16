@@ -135,3 +135,10 @@ chronological order; nothing is rewritten after the fact.*
 - Loosened the four off-topic eval anchors from the full stock sentence to the "verified background" anchor.
 - Added prompt regression tests that pin the voice-guide anchors and the vary-redirects instruction, so the guide cannot be silently dropped in a future rewrite again.
 - Updated BUILD_MAP and the How I Built This page to match. A fresh live eval run is still required before publishing a new behavioral score.
+
+## Response reveal animation — 2026-07-15
+
+- Replaced the instant full-answer render with a word-by-word reveal via `st.write_stream` (`reveal_answer` generator in `WilOS.py`), so responses type out naturally instead of a spinner resolving into a wall of text.
+- The reveal is presentational only: `get_reply` still returns a complete, schema-validated reply before the first word appears, preserving the "validate before rendering anything" guarantee. Considered and rejected true token streaming from the provider, because schema-constrained JSON cannot be safely displayed or source-validated mid-stream.
+- Only the fresh pending reply animates; history re-renders continue to use `st.write` and do not re-animate on rerun.
+- Updated the How I Built This tradeoffs section and BUILD_MAP UI notes to describe the simulated reveal and why streaming raw output is avoided.
