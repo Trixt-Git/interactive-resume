@@ -11,10 +11,11 @@ from streamlit.errors import StreamlitSecretNotFoundError
 from llm_client import get_reply
 from prompt_builder import build_system_prompt, load_facts
 from response_model import LLMReply, build_fact_index
-from style import STYLE
+from style import STANLEY_CUP, STYLE
 
 st.set_page_config(page_title="WilOS", page_icon="💬")
 st.markdown(STYLE, unsafe_allow_html=True)
+st.markdown(STANLEY_CUP, unsafe_allow_html=True)
 
 api_key = os.getenv("ANTHROPIC_API_KEY", "")
 if not api_key:
