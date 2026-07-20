@@ -168,3 +168,10 @@ chronological order; nothing is rewritten after the fact.*
 - Added an "answering on the spot" clause to the VOICE guide: vary answer shape instead of repeating the same tidy three-part structure, allow occasional fragments and dash-asides, prefer concrete numbers to adjectives, and drop the stated moral when the result makes the point. All pinned voice-guide anchors unchanged.
 - Loosened the two most pre-written-sounding few-shot examples: the develop-someone story no longer ends in a packaged lesson sentence, and the role-fit answer trades parallel clauses for a blunter close. Both remain fully fact-supported.
 - Added a "Why the career change?" few-shot — the new landing quick action had no example guiding it. Grounded in NAR-01, PROJ-FP, EDU-01, with the POS-reporting line supported by WH-MYB's independent-reporting highlight.
+
+## Broad-question length discipline — 2026-07-20
+
+- A live test of the landing quick actions showed "Walk me through your work experience" producing a ~350-word five-paragraph resume recital — which would also fail the eval suite's 150-word cap on `tell_me_about_yourself`. Rule 10 was the cause: it exempted broad career questions from any length discipline and only mandated the degree mention.
+- Rewrote rule 10: a broad career question gets a trajectory, not an inventory — three or four beats showing the arc, remaining roles in passing, explicitly under the same 150-word cap, ending on where the career is headed. The degree-in-progress requirement is unchanged.
+- Added overview-question guidance to answer-strategy rule 2: multi-item questions (both projects, several roles) get a couple of inviting sentences per item, not the full write-up.
+- No eval expectations were changed; the prompt was brought into line with the existing 150-word bar.
