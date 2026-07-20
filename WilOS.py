@@ -146,9 +146,15 @@ def render_pending_reply() -> None:
 QUICK_ACTIONS = [
     ("Experience", "Walk me through your work experience."),
     ("Projects", "Tell me about your projects."),
-    ("Systems", "How do you approach building systems and tools?"),
-    ("Role Fit", "Why are you a fit for a systems analyst role?"),
+    ("Career Change", "Why the career change?"),
+    ("Stump Me", "What can't you do?"),
 ]
+
+LINKEDIN_FOOTER = (
+    '<div class="wilos-footer">'
+    '<a href="https://www.linkedin.com/in/wil-uhlir/" target="_blank" rel="noopener">'
+    "Connect with Wil on LinkedIn ↗</a></div>"
+)
 
 
 def render_quick_actions(container, key_prefix: str):
@@ -174,6 +180,7 @@ def render_bottom_bar(key_prefix: str):
                 key=f"{key_prefix}_chat_input",
             )
             clicked = render_quick_actions(st, key_prefix)
+            st.markdown(LINKEDIN_FOOTER, unsafe_allow_html=True)
             return clicked or value
 
 
@@ -195,6 +202,11 @@ if is_empty:
     with st.container(key="wilos_hero"):
         st.markdown('<div class="wilos-title">Wil<span>OS</span></div>', unsafe_allow_html=True)
         st.markdown(
+            '<div class="wilos-tagline">Every answer here is backed by my verified background '
+            "— including what I can&#39;t do.</div>",
+            unsafe_allow_html=True,
+        )
+        st.markdown(
             '<div class="wilos-subtitle">Ask your own question below, or choose a starting point:</div>',
             unsafe_allow_html=True,
         )
@@ -205,6 +217,7 @@ if is_empty:
         clicked = render_quick_actions(st, "hero")
         if clicked:
             user_input = clicked
+        st.markdown(LINKEDIN_FOOTER, unsafe_allow_html=True)
 else:
     user_input = render_bottom_bar("main")
 

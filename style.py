@@ -41,7 +41,12 @@ footer { display: none !important; }
 .wilos-title span { color: var(--wilos-green); }
 .wilos-title--chat { font-size: 2rem; text-align: left; margin: 0 0 1rem; }
 .wilos-title--chat span { font-size: 1.2em; }
+.wilos-tagline { text-align: center; color: var(--wilos-ink); font-size: 1rem; margin: .5rem auto .1rem; max-width: 34rem; }
 .wilos-subtitle { text-align: center; color: var(--wilos-muted); font-size: 1.05rem; margin: .2rem 0 1.5rem; }
+.wilos-footer { text-align: center; margin-top: .9rem; font-size: .78rem; }
+.wilos-footer a { color: var(--wilos-muted); text-decoration: none; border-bottom: 1px solid var(--wilos-border); }
+.wilos-footer a:hover { color: var(--wilos-green); border-bottom-color: var(--wilos-green); }
+.st-key-wilos_bottom .wilos-footer { margin: .3rem 0 .45rem; }
 .wilos-subtitle--chat { font-size: .85rem; margin: .1rem 0 .4rem; padding-left: 1rem; text-align: left; }
 .askwil-label { color: var(--wilos-green); font-size: .72rem; font-weight: 700; letter-spacing: .08em; margin-bottom: .25rem; }
 .askwil-marker { display: inline-block; margin-top: .55rem; padding: .2rem .55rem; border-radius: 999px; font-size: .72rem; line-height: 1.3; }

@@ -149,3 +149,10 @@ chronological order; nothing is rewritten after the fact.*
 - Removed `career_target.immediate_focus` (Fidelity Investments LEAP Program, Systems Analyst track); the generic `career_target.text` systems-analyst statement stands on its own.
 - Reworded the `why_left_fidelity` stored sensitive response to drop the applying-back framing ("grow there long term") in favor of employer-neutral phrasing, and updated the matching `exact_answer` in `eval_honesty.py`. The disclosure control and stable ID `ST-FID` are unchanged.
 - Fidelity remains in `work_history` (`WH-FID`) as verified employment history; no facts were removed or invented.
+
+## Recruiter-side landing revisions — 2026-07-20
+
+- Replaced the role-specific quick actions ("Systems", "Role Fit" — the latter hardcoded a systems analyst framing) with role-neutral ones: "Career Change" (Why the career change?) and "Stump Me" (What can't you do?). The bot now names its own career target instead of the button presuming the recruiter's req, and the stump-me button surfaces the anti-fabrication behavior — the app's differentiator — on the landing page instead of leaving it buried in How I Built This.
+- Added a hero tagline stating the trust contract up front: every answer is backed by the verified background, including what I can't do. Visitors arrive from the resume already knowing who Wil is; the landing page's job is to explain what this app is and why to trust it.
+- Added a small "Connect with Wil on LinkedIn" footer link to the hero and the chat bottom bar, covering the forwarded-link case where the viewer never saw the resume. No email is shown, preserving the contact-disclosure policy.
+- Updated the smoke test's expected button labels.

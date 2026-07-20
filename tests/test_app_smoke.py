@@ -15,7 +15,7 @@ def test_environment_api_key_renders_landing_page(monkeypatch):
     app.run()
     assert not app.exception
     assert [button.label for button in app.button] == [
-        "Experience", "Projects", "Systems", "Role Fit"
+        "Experience", "Projects", "Career Change", "Stump Me"
     ]
     assert len(app.chat_input) == 1
 
