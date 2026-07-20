@@ -162,3 +162,9 @@ chronological order; nothing is rewritten after the fact.*
 - Broadened `career_target.text` (TGT-01) from systems-analyst-specific phrasing to multiple technology roles anchored on the same evidenced strengths, since the link now goes out with applications across role types. The bot names its own target; the UI no longer presumes the viewer's req.
 - Added a `logistics` record (LOG-01) with owner-confirmed screen answers: open to on-site/hybrid/remote, Raleigh/Triangle or remote only (no relocation), US work authorization with no sponsorship needed, two weeks' notice with start-date flexibility. Answered directly when asked, never volunteered — same discipline as the sensitive-topics policy.
 - Added two live eval cases (`relocation`, `work_authorization`) pinning LOG-01 grounding, bringing the suite to 32 cases. A fresh live run is required before publishing a new score.
+
+## Authenticity pass on the voice — 2026-07-20
+
+- Added an "answering on the spot" clause to the VOICE guide: vary answer shape instead of repeating the same tidy three-part structure, allow occasional fragments and dash-asides, prefer concrete numbers to adjectives, and drop the stated moral when the result makes the point. All pinned voice-guide anchors unchanged.
+- Loosened the two most pre-written-sounding few-shot examples: the develop-someone story no longer ends in a packaged lesson sentence, and the role-fit answer trades parallel clauses for a blunter close. Both remain fully fact-supported.
+- Added a "Why the career change?" few-shot — the new landing quick action had no example guiding it. Grounded in NAR-01, PROJ-FP, EDU-01, with the POS-reporting line supported by WH-MYB's independent-reporting highlight.
