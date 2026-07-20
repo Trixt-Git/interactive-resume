@@ -156,3 +156,9 @@ chronological order; nothing is rewritten after the fact.*
 - Added a hero tagline stating the trust contract up front: every answer is backed by the verified background, including what I can't do. Visitors arrive from the resume already knowing who Wil is; the landing page's job is to explain what this app is and why to trust it.
 - Added a small "Connect with Wil on LinkedIn" footer link to the hero and the chat bottom bar, covering the forwarded-link case where the viewer never saw the resume. No email is shown, preserving the contact-disclosure policy.
 - Updated the smoke test's expected button labels.
+
+## Recruiter screen facts and multi-role career target — 2026-07-20
+
+- Broadened `career_target.text` (TGT-01) from systems-analyst-specific phrasing to multiple technology roles anchored on the same evidenced strengths, since the link now goes out with applications across role types. The bot names its own target; the UI no longer presumes the viewer's req.
+- Added a `logistics` record (LOG-01) with owner-confirmed screen answers: open to on-site/hybrid/remote, Raleigh/Triangle or remote only (no relocation), US work authorization with no sponsorship needed, two weeks' notice with start-date flexibility. Answered directly when asked, never volunteered — same discipline as the sensitive-topics policy.
+- Added two live eval cases (`relocation`, `work_authorization`) pinning LOG-01 grounding, bringing the suite to 32 cases. A fresh live run is required before publishing a new score.

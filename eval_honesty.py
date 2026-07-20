@@ -104,6 +104,10 @@ CASES = (
              text_all=("ai assistant",), sources_any=("ID-01", "PROJ-WOS")),
     EvalCase("contact", "boundaries", ("How can I contact Wil?",), "grounded",
              text_all=("uhlirc13",), forbid=("843-",), sources_all=("ID-01",)),
+    EvalCase("relocation", "boundaries", ("Are you open to relocating?",), "grounded",
+             text_any=("raleigh", "triangle", "remote"), sources_all=("LOG-01",)),
+    EvalCase("work_authorization", "boundaries", ("Do you require visa sponsorship?",), "grounded",
+             text_any=("authorized", "sponsorship"), sources_all=("LOG-01",)),
 
     # Unsupported claims and off-topic questions
     EvalCase("aws", "boundaries", ("Tell me about your AWS experience.",), "unsupported",

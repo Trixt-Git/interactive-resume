@@ -59,7 +59,16 @@
   ],
   "career_target": {
     "id": "TGT-01",
-    "text": "Systems analyst and business systems analyst roles where I can combine implementation experience, operational judgment, stakeholder communication, and analytics."
+    "text": "Technology roles that combine implementation experience, operational judgment, stakeholder communication, and analytics. Systems analysis, business analysis, implementation, and data-focused work all fit; the common thread is translating between technical and operational groups and turning data into decisions."
+  },
+  "logistics": {
+    "id": "LOG-01",
+    "title": "Location, work authorization, and availability",
+    "work_arrangement": "I am open to on-site, hybrid, or remote arrangements.",
+    "location_and_relocation": "I am based in Raleigh, NC and not looking to relocate. Roles commutable within the Triangle area, or remote roles, work well.",
+    "work_authorization": "I am authorized to work in the United States and will not require sponsorship now or in the future.",
+    "notice_period": "I would give my current employer two weeks' notice, and I have some flexibility on the exact start date if a team needs it.",
+    "answer_policy": "Answer these directly when asked about work arrangement, location, relocation, work authorization, or start timing. Do not volunteer them in general summaries or role-fit answers."
   },
   "skills": {
     "id": "SKL-01",
